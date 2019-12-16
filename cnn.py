@@ -9,6 +9,7 @@ import wfdb
 import numpy as np
 import matplotlib.pyplot as plt
 from biosppy.signals import ecg
+import cv2
 
 record = wfdb.rdrecord('mit-bih-arrhythmia-database/100', sampto=1000, channels = [0])
 anno = wfdb.rdann('mit-bih-arrhythmia-database/100', 'atr', sampto=1000)
@@ -19,7 +20,7 @@ wfdb.plot_wfdb(record=record, annotation=anno, plot_sym=True,
 #set(anno.symbol)
 #%% DATA PROCESSING
 test_num = '100'
-sampto = 3000 # entire signal equals 650000 
+sampto = 650000 # entire signal equals 650000 
 
 signal,fields = wfdb.rdsamp('mit-bih-arrhythmia-database/' + test_num,sampto=sampto,channels = [0])
 anno = wfdb.rdann('mit-bih-arrhythmia-database/' + test_num, 'atr',sampto=sampto)
@@ -55,18 +56,26 @@ for i,idx in enumerate(beat_idx):
     
 #%% Convert to image
     
-newSignals = np.zeros((200,9))
+#newSignals = np.zeros((200,9))
+#
+#test= np.unique(np.sort(signals))
+#for i in range(9):
+#    for j in range(200):
+#        newSignals[j,i] = int(np.where(test == signals[j,i])[0])
+#
+#
+#x_train = 
 
-test= np.unique(np.sort(signals))
-for i in range(9):
-    for j in range(200):
-        newSignals[j,i] = int(np.where(test == signals[j,i])[0])
+fig = plt.figure(frameon=False)
+plt.plot(signals[:,1]) 
+plt.xticks([]), plt.yticks([])
+for spine in plt.gca().spines.values():
+    spine.set_visible(False)
 
-
-
-
-
-
+filename = 'C:/Users/Matthew/Documents/GitHub/ECG_CNN'+ '/' + str(1)+'.png'
+fig.savefig(filename)
+im_gray = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+im_gray = cv2.resize(im_gray, (300, 300), interpolation = cv2.INTER_LANCZOS4)
 
 
 
