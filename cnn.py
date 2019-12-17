@@ -5,6 +5,7 @@ Created on Sat Dec 14 16:11:08 2019
 @author: Matthew Carrano
 """
 
+# Prepare Data
 from keras.utils import to_categorical
 import numpy as np
 
@@ -31,7 +32,7 @@ tst_im = np.load('tst_im.npy')
 
 tr_im = tr_im.reshape(tr_im.shape[0],tr_im.shape[1],tr_im.shape[1],1) # channel last
 tst_im = tst_im.reshape(tst_im.shape[0],tst_im.shape[1],tst_im.shape[1],1)
-#%%
+#%% CNN
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D, BatchNormalization
