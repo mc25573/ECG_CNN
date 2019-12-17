@@ -2,13 +2,10 @@
 """
 Created on Tue Dec 17 16:13:47 2019
 
-@author: Matthew
+@author: Matthew Carrano
 """
 
 import wfdb
-import numpy as np
-import matplotlib.pyplot as plt
-from biosppy.signals import ecg
 import cv2
 
 record = wfdb.rdrecord('mit-bih-arrhythmia-database/100', sampto=1000, channels = [0])
@@ -22,8 +19,6 @@ wfdb.plot_wfdb(record=record, annotation=anno, plot_sym=True,
 import wfdb
 import numpy as np
 import matplotlib.pyplot as plt
-from biosppy.signals import ecg
-import cv2
 
 tr_rec = ['101','106','109','112','115','116','118','119','122','124','201','203','207','208','209','215','220','223'] # training records
 #tst_rec = ['100','103','105','111','113','117','121','123','200','202','210','212','213','214','219','221','222','228','231','232','233'] # test records
@@ -34,8 +29,8 @@ tr_labels = None
 for k,num in enumerate(tr_rec):    
     sampto = 650000 # entire signal equals 650000 
     
-    signal,fields = wfdb.rdsamp('mit-bih-arrhythmia-database/'+num,sampto=sampto,channels = [0])
-    anno = wfdb.rdann('mit-bih-arrhythmia-database/'+num, 'atr',sampto=sampto)
+    signal,fields = wfdb.rdsamp('mit-bih-arrhythmia-database/'+num,sampto=sampto,channels = [0]) # read signal data
+    anno = wfdb.rdann('mit-bih-arrhythmia-database/'+num, 'atr',sampto=sampto) # read annotation data
     signal = np.array(signal) # convert to numpy array
        
     beat_types = ['N','V','R','L','A','E'] # beat types the network will classify
@@ -60,7 +55,7 @@ for k,num in enumerate(tr_rec):
     
     # each column is a beat
     for i,idx in enumerate(beat_idx):
-        signals[:,i] = np.array(signal[idx-100:idx+100,0])
+        signals[:,i] = np.array(signal[idx-100:idx+100,0]) # save 200 unit window of data centered at a beat index
      
     del signal # clear to free up memory
     
@@ -91,8 +86,6 @@ for k,num in enumerate(tr_rec):
         tr_im = np.concatenate((tr_im,im_gray))
         tr_labels = np.append(tr_labels,labels)
         
-    #im_gray = im_gray.reshape(im_gray.shape[0],im_size,im_size,1)
-
-del im_gray, im, labels, signals
+del im_gray, im, labels, signals # clear mem
 #np.save('tst_im.npy',tst_im)
 #np.save('tst_labels.npy',tst_labels)
