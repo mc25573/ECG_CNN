@@ -25,14 +25,15 @@ import matplotlib.pyplot as plt
 from biosppy.signals import ecg
 import cv2
 
-#tr_rec = ['101','106','108','109','112','114','115','116','118','119','122','124','201','203','205','207','208','209','215','220','223','230']
-tr_rec = ['101','106','108','109','112','114','115','116','118','119'] # training data
-tr_im = None
-tr_label = None
+#tr_rec = ['101','106','108','109','112','114','115','116','118','119','122','124','201','203','205','207','208','209','215','220','223','230'] # training records
+#tst_rec = ['100','103','105','111','113','117','121','123','200','202','210','212','213','214','219','221','222','228','231','232','233'] # test records
+tst_rec = ['101','106','108','109','112','114','115','116','124','201','203','205','207','208'] 
+tst_im = None
+tst_labels = None
 
-for k,num in enumerate(tr_rec):    
+for k,num in enumerate(tst_rec):    
     #test_num = '100'
-    sampto = 10000 # entire signal equals 650000 
+    sampto = 650000 # entire signal equals 650000 
     
     signal,fields = wfdb.rdsamp('mit-bih-arrhythmia-database/'+num,sampto=sampto,channels = [0])
     anno = wfdb.rdann('mit-bih-arrhythmia-database/'+num, 'atr',sampto=sampto)
@@ -91,19 +92,83 @@ for k,num in enumerate(tr_rec):
     
     im_gray /= 255
     
-    if tr_im is None:
-        tr_im = im_gray
-        tr_labels = labels
+    if tst_im is None:
+        tst_im = im_gray
+        tst_labels = labels
     else:
-        tr_im = np.concatenate((tr_im,im_gray))
+        tst_im = np.concatenate((tst_im,im_gray))
+        tst_labels = np.append(tst_labels,labels)
         
     #im_gray = im_gray.reshape(im_gray.shape[0],im_size,im_size,1)
 
+del im_gray, im, labels, signals
 
 
+#%%
+tst_labels = np.load('./GitHub/tst_labels.npy')
+#%%
+from keras.models import Sequential
+from keras.utils import to_categorical
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D, BatchNormalization
 
+model = Sequential()
 
+model.add(Conv2D(32,(3,3),strides=(1,1), input_shape =(128,128,1),kernel_initializer='glorot_uniform',activation='elu'))
 
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(Conv2D(32,(3,3),strides=(1,1),kernel_initializer='glorot_uniform',activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+
+model.add(Conv2D(128,(3,3),strides=(1,1),kernel_initializer='glorot_uniform',activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(Conv2D(128,(3,3),strides=(1,1),kernel_initializer='glorot_uniform',activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+
+model.add(Conv2D(256,(3,3),strides=(1,1),kernel_initializer='glorot_uniform',activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(Conv2D(256,(3,3),strides=(1,1),kernel_initializer='glorot_uniform',activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+
+model.add(Flatten())
+
+model.add(Dense(2048,activation='elu'))
+
+#model.add(keras.layers.ELU())
+
+model.add(BatchNormalization())
+
+model.add(Dropout(0.5))
+
+model.add(Dense(6, activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 
 
