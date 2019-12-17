@@ -60,7 +60,6 @@ for k,num in enumerate(tst_rec):
     #np.count_nonzero(labels=='N')
     
     beat_idx = np.array(anno_idx[ids]) # find index of specific beat peaks
-    beat_idx
     
     signals = np.zeros((200,len(beat_idx)))
     
@@ -90,8 +89,9 @@ for k,num in enumerate(tst_rec):
         #cv2.imwrite(filename, im_gray)
         #im_gray=im_gray.reshape(1,300,300,1)
     
-    im_gray /= 255
+    im_gray /= 255 # normalize
     
+    # only concatenate if not first loop
     if tst_im is None:
         tst_im = im_gray
         tst_labels = labels
@@ -103,12 +103,27 @@ for k,num in enumerate(tst_rec):
 
 del im_gray, im, labels, signals
 
-
 #%%
-tst_labels = np.load('./GitHub/tst_labels.npy')
+from keras.utils import to_categorical
+import numpy as np
+
+def toInt(labels,charList):
+    for i,beat in enumerate(charList):
+        labels = np.where(labels==beat,i,labels)
+    return labels.astype(int)
+
+beat_types = ['N','V','R','L','A','E']
+
+tst_labels = np.load('../tst_labels.npy')
+tr_labels = np.load('../tr_labels.npy')
+#%%
+tst_labels = toInt(tst_labels,beat_types)       
+tst_labels = to_categorical(tst_labels,num_classes=6)
+
+tr_labels = toInt(tr_labels,beat_types)       
+tr_labels = to_categorical(tr_labels,num_classes=6)
 #%%
 from keras.models import Sequential
-from keras.utils import to_categorical
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D, BatchNormalization
 
