@@ -5,24 +5,14 @@ Created on Tue Dec 17 16:13:47 2019
 @author: Matthew Carrano
 """
 
-import wfdb
-import cv2
-
-record = wfdb.rdrecord('mit-bih-arrhythmia-database/100', sampto=1000, channels = [0])
-anno = wfdb.rdann('mit-bih-arrhythmia-database/100', 'atr', sampto=1000)
-
-wfdb.plot_wfdb(record=record, annotation=anno, plot_sym=True,
-                   time_units='seconds', title='MIT-BIH Record 100',
-                   figsize=(10,4), ecg_grids='all')
-#set(anno.symbol)
-#%% DATA PROCESSING
+# DATA PROCESSING, training/testing data must be created separately
 import wfdb
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
 
 tr_rec = ['101','106','109','112','115','116','118','119','122','124','201','203','207','208','209','215','220','223'] # training records
-#tst_rec = ['100','103','105','111','113','117','121','123','200','202','210','212','213','214','219','221','222','228','231','232','233'] # test records
-#tst_rec = ['100','103','105','111','113','200','222','124','212','213','231','232','233'] 
+#tst_rec = ['100','103','105','111','113','200','222','124','212','213','231','232','233'] # test records
 tr_im = None
 tr_labels = None
 

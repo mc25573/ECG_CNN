@@ -15,8 +15,8 @@ def toInt(labels,charList):
 
 beat_types = ['N','V','R','L','A','E']
 
-tst_labels = np.load('../tst_labels.npy')
-tr_labels = np.load('../tr_labels.npy')
+tst_labels = np.load('tst_labels.npy')
+tr_labels = np.load('tr_labels.npy')
 
 tst_labels = toInt(tst_labels,beat_types)       
 tst_labels = to_categorical(tst_labels,num_classes=len(beat_types))
@@ -26,8 +26,8 @@ tr_labels = to_categorical(tr_labels,num_classes=len(beat_types))
 tr_labels = np.float16(tr_labels)
 tst_labels = np.float16(tst_labels)
 
-tr_im = np.load('../tr_im.npy')
-tst_im = np.load('../tst_im.npy')
+tr_im = np.load('tr_im.npy')
+tst_im = np.load('tst_im.npy')
 
 tr_im = tr_im.reshape(tr_im.shape[0],tr_im.shape[1],tr_im.shape[1],1) # channel last
 tst_im = tst_im.reshape(tst_im.shape[0],tst_im.shape[1],tst_im.shape[1],1)
